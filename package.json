@@ -1,0 +1,16 @@
+{
+  "name": "graphql-sample",
+  "version": "1.0.0",
+  "description": "A graphql practice sample app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "node index.js"
+  },
+  "author": "Eric Liao <rclaio01@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^0.9.1",
+    "koa": "^1.2.5"
+  }
+}
