@@ -6,10 +6,24 @@ const graphHttp = require('koa-graphql');
 const schema = buildSchema(`
 	type Query {
 		hello: String
+		quoteOfTheDay: String
+		random: Float!
+		rollThreeDice: [Int]
 	}
 `);
 
-const root = { hello: () => 'Hello World!' };
+const root = {
+	hello: () => 'Hello World!',
+	quoteOfTheDay: () => {
+		return Math.random() < 0.5 ? 'Take it easy' : 'Salvation lies within';
+	},
+	random: () => {
+		return Math.random()
+	},
+	rollThreeDice: () => {
+		return [1, 2, 3].map(_ => 1 + Math.floor(Math.random() * 6));
+	}
+};
 
 const app = koa();
 
