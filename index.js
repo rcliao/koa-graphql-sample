@@ -9,13 +9,28 @@ const schema = buildSchema(`
 		rollOnce: Int!
 		roll(numRolls: Int!): [Int]
 	}
+	input MessageInput {
+		content: String
+		author: String
+	}
+	type Message {
+		id: ID!
+		content: String
+		author: String
+	}
+
+	type Mutation {
+		createMessage(input: MessageInput): Message
+		updateMessage(id: ID!, input: MessageInput): Message
+	}
 	type Query {
 		hello: String
 		quoteOfTheDay: String
 		random: Float!
 		rollThreeDice: [Int]
-		rollDice(numDices: Int!, numSides: Int): [Int],
+		rollDice(numDices: Int!, numSides: Int): [Int]
 		getDice(numSides: Int): RandomDice
+		getMessage(id: ID!): Message
 	}
 `);
 
@@ -37,6 +52,16 @@ class RandomDice {
 	}
 }
 
+class Message {
+	constructor (id, {content, author}) {
+		this.id = id;
+		this.content = content;
+		this.author = author;
+	}
+}
+
+const mockDatabase = {};
+
 const root = {
 	hello: () => 'Hello World!',
 	quoteOfTheDay: () => {
@@ -57,6 +82,24 @@ const root = {
 	},
 	getDice: ({numSides}) => {
 		return new RandomDice(numSides || 6);
+	},
+	createMessage: ({input}) => {
+		let id = require('crypto').randomBytes(10).toString('hex');
+		mockDatabase[id] = input;
+		return new Message(id, input);
+	},
+	updateMessage: ({id, input}) => {
+		if (!mockDatabase[id]) {
+			throw new Error('No message is found with id ' + id);
+		}
+		mockDatabase[id] = input;
+		return new Message(id, input);
+	},
+	getMessage: ({id}) => {
+		if (!mockDatabase[id]) {
+			throw new Error('No message is found with id ' + id);
+		}
+		return new Message(id, mockDatabase[id]);
 	}
 };
 
